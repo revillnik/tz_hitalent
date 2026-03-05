@@ -35,8 +35,8 @@ def validate_id_parameter(id: Any) -> bool:
     """
 
     try:
-        int(id)
-        return True
+        id = int(id)
+        return id >= 0
     except:
         return False
     
@@ -46,7 +46,7 @@ def validate_mode_parameter(mode: Any) -> bool:
     Функция для валидации параметра mode, который передается в DELETE запросе по пути /departments/{id}
     """
 
-    if mode and type(mode) == str and mode in ['cascade', 'reassign']:
+    if mode and type(mode) == str and mode.lower() in ['cascade', 'reassign']:
         return True
     else:
         return False
@@ -63,18 +63,18 @@ def validate_department_inheritance_cycle(child_department: Department, list_chi
 
     # если цикл есть, то значит в списке наследования будет повторение id депортаментов, 
     # увидеть это мы можем посредством сравнения количества уникальных id и общего количества id
-    check_cycle = len(set(list_child_deparment_ids)) == len(list_child_deparment_ids)
+    has_cycle = len(set(list_child_deparment_ids)) == len(list_child_deparment_ids)
 
-    if child_department and check_cycle:
+    if child_department and has_cycle:
         list_child_deparment_ids.append(child_department.id)
         
-        new_check_cycle = len(set(list_child_deparment_ids)) == len(list_child_deparment_ids)
+        new_has_cycle = len(set(list_child_deparment_ids)) == len(list_child_deparment_ids)
 
         # если у данного депортамента есть родитель - возвращаем его
         if child_department.parent_id:
             return validate_department_inheritance_cycle(child_department=child_department.parent_id, list_child_deparment_ids=list_child_deparment_ids)
         else:
-            return new_check_cycle, list_child_deparment_ids
+            return new_has_cycle, list_child_deparment_ids
     else:
-        return check_cycle, list_child_deparment_ids
+        return has_cycle, list_child_deparment_ids
 

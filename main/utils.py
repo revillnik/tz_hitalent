@@ -25,7 +25,7 @@ def get_children_departments_with_depth(department: Department, depth: int, dept
 
             # для каждого дочернего депортамента запускаем рекурсивный обход
             for child_department in list_department_children:
-                result_list = get_children_departments_with_depth(
+                get_children_departments_with_depth(
                     department=child_department,
                     depth=depth,
                     result_list=result_list,
